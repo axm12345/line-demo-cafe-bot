@@ -1,0 +1,20 @@
+{
+  "business_name": "Demo Cafe",
+  "hours": {
+    "text": "We're open every day from 8:00 AM to 8:00 PM, including weekends and public holidays."
+  },
+  "menu": {
+    "text": "Our menu:\n- Espresso - 60 THB\n- Latte - 75 THB\n- Cappuccino - 75 THB\n- Iced Americano - 65 THB\n- Croissant - 55 THB\n- Avocado Toast - 120 THB"
+  },
+  "delivery": {
+    "text": "We deliver within a 3km radius via Grab/LINE MAN. Delivery fee is calculated by the app based on distance. We do not deliver outside this zone yet."
+  },
+  "location": {
+    "text": "We're located at 123 Sample Road, near BTS Demo Station, Bangkok. Look for the yellow awning!"
+  },
+  "contact": {
+    "text": "For anything else, feel free to ask and we'll get back to you as soon as we can!"
+  },
+
+  "_comment": "This whole file is what you edit per client. Swap in their real hours, menu, delivery zones, etc. Keep 'text' short and natural — this is what gets sent directly to the customer for exact-match questions."
+}
