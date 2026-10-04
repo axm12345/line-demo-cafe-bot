@@ -24,10 +24,22 @@ with open("business_data.json", "r", encoding="utf-8") as f:
 # This is the part you'll customize the most per client. Add as many
 # keywords as you can think of for how real customers phrase things.
 KEYWORD_MAP = {
-    "hours": ["open", "close", "hour", "time", "when are you"],
-    "menu": ["menu", "price", "cost", "how much", "coffee", "food"],
-    "delivery": ["deliver", "delivery", "grab", "line man", "send"],
-    "location": ["where", "location", "address", "map"],
+    "hours": [
+        "open", "close", "hour", "time", "when are you",
+        "เปิด", "ปิด", "กี่โมง", "เวลา",
+    ],
+    "menu": [
+        "menu", "price", "cost", "how much", "coffee", "food",
+        "เมนู", "ราคา", "เท่าไหร่", "เท่าไร",
+    ],
+    "delivery": [
+        "deliver", "delivery", "grab", "line man", "send",
+        "ส่ง", "เดลิเวอรี่", "แกร็บ",
+    ],
+    "location": [
+        "where", "location", "address", "map",
+        "ที่ไหน", "ที่อยู่", "แผนที่",
+    ],
 }
 
 HANDOFF_MESSAGE = (
@@ -72,6 +84,7 @@ Known information about the business (this is ALL you know — do not invent any
 {context}
 
 Rules:
+- Reply in the same language the customer used (Thai, English, or a mix) — match them naturally.
 - Keep replies short and warm, like a real person texting back — 1-3 sentences.
 - For greetings, thanks, or general small talk (e.g. "hello", "thank you", "are you open rn"
   phrased casually), reply naturally and warmly — you don't need the business data for this.
