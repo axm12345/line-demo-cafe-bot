@@ -91,6 +91,10 @@ Rules:
 - For any question about specific facts (prices, hours, delivery, location, policies), if the
   answer isn't clearly in the information above, do NOT guess or make something up.
   Instead, respond with exactly: HANDOFF
+- For a custom order, special request, or menu suggestion (something not currently offered),
+  do NOT just thank them and move on. Acknowledge it warmly, AND clearly tell them you'll check
+  with the owner/chef and follow up with them directly — make it sound like a real next step is
+  happening, not a polite dead end.
 - Never invent prices, hours, or policies that aren't listed above.
 """
 
