@@ -1,9 +1,8 @@
 """
-app.py
+LINE webhook server.
 
-This is the plumbing: it receives messages from LINE and sends replies back.
-You generally won't need to change much here — reply_logic.py is where the
-actual behavior lives.
+Receives messages from LINE, asks reply_logic.py what to say, and sends the
+reply back. All of the bot's behaviour lives in reply_logic.py.
 """
 
 import os
@@ -23,8 +22,8 @@ from reply_logic import generate_reply
 
 app = Flask(__name__)
 
-# These come from the LINE Developers Console for your Official Account.
-# Set them as environment variables — never hardcode them in the file.
+# Channel credentials from the LINE Developers Console. They are read from
+# environment variables so they never appear in the code.
 CHANNEL_SECRET = os.environ["LINE_CHANNEL_SECRET"]
 CHANNEL_ACCESS_TOKEN = os.environ["LINE_CHANNEL_ACCESS_TOKEN"]
 
@@ -34,14 +33,14 @@ handler = WebhookHandler(CHANNEL_SECRET)
 
 @app.route("/callback", methods=["POST"])
 def callback():
-    """This is the URL you'll register with LINE as your webhook."""
+    """Webhook endpoint registered in the LINE Developers Console."""
     signature = request.headers.get("X-Line-Signature", "")
     body = request.get_data(as_text=True)
 
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
-        # Someone (or something) sent a request that wasn't really from LINE.
+        # The request wasn't signed by LINE, so reject it.
         abort(400)
 
     return "OK"
@@ -49,7 +48,7 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
-    """Called automatically for every text message LINE forwards to us."""
+    """Handle each text message LINE forwards: work out a reply and send it."""
     user_message = event.message.text
     reply_text = generate_reply(user_message)
 
@@ -64,7 +63,7 @@ def handle_message(event):
 
 @app.route("/", methods=["GET"])
 def health_check():
-    """Just so you can confirm the server is alive by visiting the URL."""
+    """Health check: visiting the server's URL shows that it is running."""
     return "Bot is running!"
 
 

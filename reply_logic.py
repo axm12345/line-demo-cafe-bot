@@ -1,28 +1,27 @@
 """
-reply_logic.py
-
-This is the part YOU should read closely and extend — it decides what the bot
-actually says. Everything else in this project is plumbing to get messages
-in and out of LINE; this file is the actual product.
+Decides what the bot says. The rest of the project only moves messages in
+and out of LINE.
 
 Flow for every incoming message:
-  1. Try to match it against known keywords (fast, free, always accurate).
-  2. If nothing matches, fall back to an AI-generated reply that's grounded
-     in the business's data (flexible, costs a fraction of a cent per call).
-  3. If the AI itself isn't confident, hand off to a human instead of guessing.
+  1. Match it against known keywords (fast, free, always accurate).
+  2. If nothing matches, ask Claude for a reply grounded in the shop's data
+     (flexible, costs a fraction of a cent per call).
+  3. If Claude would have to guess, hand off to a human instead.
 """
 
 import json
-import os
+import logging
 from anthropic import Anthropic
+
+logger = logging.getLogger(__name__)
 
 # Load the business's knowledge base once at startup.
 with open("business_data.json", "r", encoding="utf-8") as f:
     BUSINESS_DATA = json.load(f)
 
-# Keyword -> which entry in business_data.json to reply with.
-# This is the part you'll customize the most per client. Add as many
-# keywords as you can think of for how real customers phrase things.
+# Keyword -> which entry in business_data.json answers it.
+# This is the main thing to adapt for each shop: add the ways its customers
+# actually phrase their questions.
 KEYWORD_MAP = {
     "hours": [
         "open", "close", "hour", "time", "when are you",
@@ -123,8 +122,7 @@ def generate_reply(message: str) -> str:
 
     try:
         return ask_ai(message)
-    except Exception as e:
-        # TEMPORARY: print the real error so we can see what's failing.
-        # Remove this print line once things are working.
-        print(f"AI call failed: {e}")
+    except Exception:
+        # Never leave a customer without an answer: log the error and hand off.
+        logger.exception("AI reply failed")
         return HANDOFF_MESSAGE
