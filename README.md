@@ -8,6 +8,12 @@ This version is set up for a demo café. Swap one file and it becomes any shop's
 
 ## What a chat looks like
 
+<img src="docs/chat-example.png" width="340" alt="Customer asks opening hours, price in Thai and delivery; the bot answers each instantly">
+
+<sub>The replies are the bot's real output from running its code. The chat window is recreated in LINE's style for this picture.</sub>
+
+More examples, including when Claude steps in:
+
 | Customer types | Bot replies | How it decided |
 |---|---|---|
 | what time do you open? | We're open every day from 8:00 AM to 8:00 PM, including weekends and public holidays. | Keyword match ("open"): instant and free |
