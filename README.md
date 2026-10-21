@@ -1,75 +1,39 @@
-# LINE Auto-Reply Bot — Starter
+# LINE auto-reply bot for small businesses
 
-A demo bot for a fake cafe. Edit `business_data.json` to make it a real
-client's bot.
+Small shops in Thailand get most of their customer questions on LINE: *"what time do you open?"*, *"how much is a latte?"*, *"do you deliver?"*. When the owner is busy, those messages sit unanswered. This bot replies instantly, in Thai or English, using only the business's real information.
 
-## How it works
+## How it decides what to say
 
-1. `app.py` — receives messages from LINE, sends replies. You probably won't
-   need to touch this much.
-2. `reply_logic.py` — decides WHAT to say. This is the part to actually
-   read, understand, and extend.
-3. `business_data.json` — the "knowledge" the bot has about the business.
+```
+customer message
+   │
+   ├─ 1. Keyword match (English + Thai)  ──►  instant, free, exact answer
+   │
+   ├─ 2. No match → Claude, given ONLY the business's data  ──►  natural reply
+   │
+   └─ 3. Claude unsure, or asked a fact it doesn't have  ──►  hand off to a human
+```
 
-## Local setup
+- **Keywords first.** Common questions about hours, menu, delivery and location (`เปิด`, `ราคา`, `ส่ง`…) are answered straight from `business_data.json`. That costs nothing and is always correct.
+- **AI fallback, with no guessing.** Anything else goes to Claude with a strict prompt: answer only from the business data, reply in the customer's language, and keep it short. If it would have to guess a price or policy, it replies `HANDOFF` instead.
+- **Human handoff.** The customer is told the team will follow up, instead of getting a made-up answer. Custom orders get a clear "I'll check with the owner" rather than a polite dead end.
 
-1. Install dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
+## Make it any business's bot
 
-2. Get your LINE credentials:
-   - Create a LINE Official Account (free) at https://manager.line.biz
-   - In the LINE Developers Console (https://developers.line.biz), find your
-     Channel Secret and generate a Channel Access Token
-   - Enable "Use webhook" for the channel, and turn OFF the default
-     auto-reply / greeting messages (so they don't conflict with your bot)
+Everything specific to the business is in `business_data.json`. Swap in a real shop's hours, menu and delivery zone, add the way their customers phrase questions to `KEYWORD_MAP` in `reply_logic.py`, and it's their bot.
 
-3. Get an Anthropic API key at https://console.anthropic.com
+## Tech
 
-4. Set environment variables (don't commit these anywhere):
-   ```
-   export LINE_CHANNEL_SECRET="your_channel_secret"
-   export LINE_CHANNEL_ACCESS_TOKEN="your_access_token"
-   export ANTHROPIC_API_KEY="your_api_key"
-   ```
+`Python` · `Flask` · `LINE Messaging API (line-bot-sdk v3)` · `Claude API`
 
-5. Run it locally:
-   ```
-   python app.py
-   ```
+## Run it
 
-6. To test locally before deploying, use ngrok to expose your local server:
-   ```
-   ngrok http 5000
-   ```
-   Then set the ngrok URL + `/callback` (e.g.
-   `https://abc123.ngrok.io/callback`) as your webhook URL in the LINE
-   Developers Console.
+```bash
+pip install -r requirements.txt
+export LINE_CHANNEL_SECRET=...        # from the LINE Developers Console
+export LINE_CHANNEL_ACCESS_TOKEN=...
+export ANTHROPIC_API_KEY=...
+python app.py
+```
 
-## Deploying for real (so it's always on)
-
-Push this folder to a GitHub repo, then deploy on Railway or Render:
-
-- Both platforms auto-detect Flask apps
-- Add the three environment variables in their dashboard (never commit
-  actual keys to GitHub)
-- Once deployed, take the public URL they give you, add `/callback` to the
-  end, and set that as your webhook URL in the LINE Developers Console
-
-## Testing before pitching a client
-
-Message your own bot with a range of phrasing:
-- Exact keyword matches: "what time do you open"
-- Rephrased versions: "when can I come by"
-- Something totally unrelated: "do you sell birthday cakes"
-  (should trigger a graceful handoff, not a made-up answer)
-
-## Customizing for a real client
-
-1. Replace everything in `business_data.json` with their real info
-2. Expand `KEYWORD_MAP` in `reply_logic.py` with however their actual
-   customers tend to phrase questions (ask the owner what they get asked
-   most)
-3. Consider adding a notification step (e.g. sending yourself or the owner
-   a message) whenever a HANDOFF happens, so a human actually follows up
+Expose it with `ngrok http 5000` and set `https://<your-ngrok-url>/callback` as the webhook in the LINE Developers Console. To keep it running all the time, deploy to Railway or Render with the same three environment variables.
